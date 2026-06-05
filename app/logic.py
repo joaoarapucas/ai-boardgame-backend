@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 from app.schemas import Cell, SetupResponse, PlayerTurnResponse
 
 def choose_setup(board: list[list[Cell]]) -> SetupResponse:
