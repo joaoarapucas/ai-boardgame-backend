@@ -32,9 +32,8 @@ class AITurnRequest(BaseModel):
     turn_number: int
     turn_phase: TurnPhase
     your_team: TeamID
-    professor_to_place: Optional[str]
+    professor_to_place: Optional[str] = None
     board: List[List[Cell]]
-    professor_to_place: str = Field(default=None)
 
 class SetupResponse(BaseModel):
     row: int = Field(ge=0, le=4)
