@@ -6,6 +6,12 @@ class TeamID(IntEnum):
     TURING = 1   # claro e rey
     LOVELACE = 2 # karin e beatriz
 
+TEAM_PROFESSORS = {
+    1: ["CLARO", "REY"],       # Turing
+    2: ["KARIN", "BEATRIZ"],   # Lovelace
+}
+
+
 class TurnPhase(str, Enum):
     SETUP = "setup_placement"
     PLAYER_TURN = "player_turn"

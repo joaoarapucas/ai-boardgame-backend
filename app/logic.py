@@ -1,6 +1,6 @@
 import random
 from typing import Optional
-from app.schemas import Cell, SetupResponse, PlayerTurnResponse
+from app.schemas import Cell, SetupResponse, PlayerTurnResponse, TEAM_PROFESSORS
 
 def choose_setup(board: list[list[Cell]]) -> SetupResponse:
     candidates = [
