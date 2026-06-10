@@ -225,14 +225,13 @@ def score_professor( board: list[list[Cell]], professor: str,
     #OFFENSIVE AND DEFENSIVE POINTS
     if offensive:
         for enemy in enemy_professors:
-        enemy_pos = find_professor(board, enemy)
-        if enemy_pos:
-            dist_to_enemy = max(abs(r - enemy_pos[0]), abs(c - enemy_pos[1]))
-            if dist_to_enemy == 1:
-                score += 3.0 # close to enemy - good!
-            else:
-                score -= dist_to_enemy * 0.5 # penalty for being far from enemy
-
+            enemy_pos = find_professor(board, enemy)
+            if enemy_pos:
+                dist_to_enemy = max(abs(r - enemy_pos[0]), abs(c - enemy_pos[1]))
+                if dist_to_enemy == 1:
+                    score += 3.0 # close to enemy - good!
+                else:
+                    score -= dist_to_enemy * 0.5 # penalty for being far from enemy
 
     else: # defensive
         # incentive to get heigher
