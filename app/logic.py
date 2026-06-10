@@ -18,10 +18,10 @@ DEFENSIVE_PROFESSORS = {"REY", "BEATRIZ"}
 # ! ! ! HEURISTICS WEIGHTS ! ! !
 #note: arbitrary weight values! 
 MOBILITY_WEIGHT    = 1.0   # both - move possibilites
-HEIGHT_WEIGHT      = 4.0   # both - better height
-BLOCK_WEIGHT       = 1.75   # offense - try to block opponet
+HEIGHT_WEIGHT      = 5.0   # both - better height
+BLOCK_WEIGHT       = 1.5   # offense - try to block opponet
 ADVANCE_WEIGHT     = 3.0   # defensive - try to get higher
-CELL_DISTANCE_W   = 1.0   # defensive - try to get closer to high cells
+CELL_DISTANCE_W   = 0.8   # defensive - try to get closer to high cells
 
 TIME_LIMIT = 4.3 # time limit for the IDS (depth search/thinking)
 
@@ -219,18 +219,24 @@ def score_professor( board: list[list[Cell]], professor: str,
     score += HEIGHT_WEIGHT * level # better height
     score += MOBILITY_WEIGHT * mobility # better move options
 
+    if level == 0:
+        score -= 6.0
+
     #OFFENSIVE AND DEFENSIVE POINTS
     if offensive:
-        for enemy in enemy_professors:
-            #scores better if diminished enemy's options - basically a troll
-            score += BLOCK_WEIGHT * (8 - count_mobility(board, enemy)) 
+        if level > 0: #wont block if on ground (harder to get out!)
+            for enemy in enemy_professors:
+                #scores better if diminished enemy's options - basically a troll
+                score += BLOCK_WEIGHT * (8 - count_mobility(board, enemy)) 
+        else:
+            score -= 4.0
 
     else: # defensive
         # incentive to get heigher
         if level == 2:
-            score += ADVANCE_WEIGHT * 3
+            score += ADVANCE_WEIGHT * 2.5
         elif level == 1:
-            score += ADVANCE_WEIGHT * 1
+            score += ADVANCE_WEIGHT * 0.8
 
         # incentive to be around high level cells
         for cell_row in range(BOARD_SIZE):
@@ -353,8 +359,16 @@ def move_score_quick( board: list[list[Cell]], move: PlayerTurnResponse, my_team
     if destiny_level == 3: #winning move!
         return 1000.0 
 
+    prof_pos = find_professor(board, move.professor)
+    if prof_pos:
+        cur_level = board[prof_pos[0]][prof_pos[1]].level
+        level_diff = destiny_level - cur_level
+        level_bonus = level_diff * 5.0  # incentive to get higher
+    else:
+        level_bonus = 0.0
+
     new_board = apply_move(board, move)
-    return heuristic(new_board, my_team)
+    return heuristic(new_board, my_team) + level_bonus
 
 
 
