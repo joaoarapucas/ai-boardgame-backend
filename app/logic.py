@@ -18,10 +18,10 @@ DEFENSIVE_PROFESSORS = {"REY", "BEATRIZ"}
 # ! ! ! HEURISTICS WEIGHTS ! ! !
 #note: arbitrary weight values! 
 MOBILITY_WEIGHT    = 1.0   # both - move possibilites
-HEIGHT_WEIGHT      = 3.0   # both - better height
-BLOCK_WEIGHT       = 2.0   # offense - try to block opponet
-ADVANCE_WEIGHT     = 4.0   # defensive - try to get higher
-CELL_DISTANCE_W   = 1.5   # defensive - try to get closer to high cells
+HEIGHT_WEIGHT      = 4.0   # both - better height
+BLOCK_WEIGHT       = 1.75   # offense - try to block opponet
+ADVANCE_WEIGHT     = 3.0   # defensive - try to get higher
+CELL_DISTANCE_W   = 1.0   # defensive - try to get closer to high cells
 
 TIME_LIMIT = 4.3 # time limit for the IDS (depth search/thinking)
 
@@ -238,7 +238,7 @@ def score_professor( board: list[list[Cell]], professor: str,
                 cell_level = board[cell_row][cell_col].level
                 if cell_level in (2, 3):
                     dist = max(abs(r - cell_row), abs(c - cell_col))  #chebyshev distance
-                    if dist <= 2:
+                    if dist <= 1:
                         score += CELL_DISTANCE_W * (3 - dist) * cell_level
 
     return score
@@ -251,10 +251,10 @@ def heuristic(board: list[list[Cell]], maximizing_team: int) -> float:
     """
     opp_team = 3 - maximizing_team
 
-    max_profs   = TEAM_PROFESSORS[maximizing_team]
+    max_profs = TEAM_PROFESSORS[maximizing_team]
     opp_profs = TEAM_PROFESSORS[opp_team]
 
-    my_score    = 0.0
+    my_score = 0.0
     opp_score = 0.0
 
     for prof in max_profs:
@@ -413,8 +413,6 @@ def choose_turn( board: list[list[Cell]], team_id: int ) -> Optional[PlayerTurnR
     best_move  = moves[0]
     best_value = -INF
 
-    best_candidate = best_move
-
     for move in moves:
         if time.time() - start > TIME_LIMIT:
             break #reached time limit, best of luck!
@@ -431,8 +429,7 @@ def choose_turn( board: list[list[Cell]], team_id: int ) -> Optional[PlayerTurnR
         )
         if value > best_value:
             best_value = value
-            best_candidate  = move
-        else:
-            best_move = best_candidate
+            best_move  = move
+
     print("\n\nthinking time: " + str(time.time() - start))        
     return best_move
