@@ -1,5 +1,5 @@
 from typing import Optional
-from schemas import Cell, Position, SetupResponse, PlayerTurnResponse, TEAM_PROFESSORS
+from app.schemas import Cell, Position, SetupResponse, PlayerTurnResponse, TEAM_PROFESSORS
 import random
 import copy
 import time
