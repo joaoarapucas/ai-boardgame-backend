@@ -224,12 +224,15 @@ def score_professor( board: list[list[Cell]], professor: str,
 
     #OFFENSIVE AND DEFENSIVE POINTS
     if offensive:
-        if level > 0: #wont block if on ground (harder to get out!)
-            for enemy in enemy_professors:
-                #scores better if diminished enemy's options - basically a troll
-                score += BLOCK_WEIGHT * (8 - count_mobility(board, enemy)) 
-        else:
-            score -= 4.0
+        for enemy in enemy_professors:
+        enemy_pos = find_professor(board, enemy)
+        if enemy_pos:
+            dist_to_enemy = max(abs(r - enemy_pos[0]), abs(c - enemy_pos[1]))
+            if dist_to_enemy == 1:
+                score += 3.0 # close to enemy - good!
+            else:
+                score -= dist_to_enemy * 0.5 # penalty for being far from enemy
+
 
     else: # defensive
         # incentive to get heigher
@@ -244,10 +247,29 @@ def score_professor( board: list[list[Cell]], professor: str,
                 cell_level = board[cell_row][cell_col].level
                 if cell_level in (2, 3):
                     dist = max(abs(r - cell_row), abs(c - cell_col))  #chebyshev distance
-                    if dist <= 1:
+                    if dist <= 2:
                         score += CELL_DISTANCE_W * (3 - dist) * cell_level
 
     return score
+
+
+def threat_penalty(board, my_team):
+    opp_team = 3 - my_team
+    penalty = 0.0
+    for prof in TEAM_PROFESSORS[opp_team]:
+        pos = find_professor(board, prof)
+        if pos is None:
+            continue
+        r, c = pos
+        cur_level = board[r][c].level
+        for ar, ac in adjacent_cells(r, c):
+            cell = board[ar][ac]
+            if cell.level == 3 and cell.professor is None:
+                penalty -= 15.0  # max danger - opp about to win
+            elif cell.level == 2 and cur_level >= 1 and cell.professor is None:
+                penalty -= 6.0 # mid danger
+    return penalty
+
 
 
 def heuristic(board: list[list[Cell]], maximizing_team: int) -> float:
@@ -271,7 +293,7 @@ def heuristic(board: list[list[Cell]], maximizing_team: int) -> float:
         is_off = prof in OFFENSIVE_PROFESSORS
         opp_score += score_professor(board, prof, is_off, max_profs)
 
-    return my_score - opp_score
+    return my_score - opp_score + threat_penalty(board, maximizing_team)
 
 
 
