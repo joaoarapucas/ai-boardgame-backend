@@ -9,7 +9,7 @@ it was programmed in Python, and this player's strategy used Alpha-Beta Minimax 
 
 the bot has to make a move in 5 seconds or it loses the match automatically, so some improvements were required.
 
-## tech and details
+## Tech and details
 
 the programming language was Python, with FastAPI to communicate with the game rules orchestrator API hosted by our professor. The API was hosted using Railway.
 
@@ -57,6 +57,8 @@ The final heuristic score for any board state is `my_score - opponent_score + th
 
 The core search algorithm is **minimax**: the AI builds a game tree, alternating between the maximizing player (itself) and the minimizing player (the opponent), and picks the move that leads to the best guaranteed outcome assuming both sides play optimally.
 
+![Minimax game tree](https://www.mygreatlearning.com/blog/wp-content/uploads/2020/05/Blog-8-5-2020-05-1024x567.jpg)
+
 To make this feasible, it uses **alpha-beta pruning**. As the tree is explored, two values are maintained — `alpha` (the best the maximizer is guaranteed so far) and `beta` (the best the minimizer is guaranteed so far). Whenever `alpha >= beta`, the current branch can no longer influence the final decision and is cut off entirely. In practice, this can reduce the number of nodes evaluated from O(b^d) to roughly O(b^(d/2)), effectively doubling the searchable depth for the same computation budget.
 
 Move ordering further improves pruning efficiency: before running the full minimax, moves are pre-sorted using a fast shallow heuristic (`move_score_quick`), so the most promising moves (e.g. climbs to level 3, upward steps) are explored first — making alpha-beta cuts happen earlier and more often.
@@ -76,3 +78,12 @@ The solution is **iterative deepening**: the bot runs minimax at increasing dept
 The heuristic weights (`HEIGHT_WEIGHT = 5.0`, `MOBILITY_WEIGHT = 1.0`, `BLOCK_WEIGHT = 1.5`, etc.) were set by hand through intuition and manual testing. While the bot currently wins 100% of its matches against a random-move AI, these values were not great against stronger opponents... :(
 
 A natural next step would be to tune them automatically using a **genetic algorithm**. The idea is straightforward: generate a population of bots, each with a randomly initialised set of weight values; have them play round-robin tournaments against each other; select the individuals that won in the fewest turns (minimising turns is a stronger fitness signal than win rate alone, since it captures dominance rather than just survival); apply crossover and mutation to the survivors; and repeat for several generations. Over time, the population converges toward weight combinations that produce faster, more decisive wins.
+
+## Resources
+
+- [Minimax with Alpha-Beta Pruning in Python](https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python/)
+- [pi5-aux](https://github.com/guilhermeRey/pi5-aux/)
+- [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance)
+- [Algorithms](https://cs.stanford.edu/people/eroberts/courses/soco/projects/2003-04/intelligent-search/inter.html)
+- Artificial Intelligence: A Modern Approach - Stuart J. Russell et al.
+- Introduction to Algorithms, third edition - Thomas H. Cormen et al.
