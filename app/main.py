@@ -5,8 +5,8 @@ from app.schemas import AITurnRequest, TurnPhase
 from app.logic import choose_setup, choose_turn
 
 app = FastAPI(
-    title="piegas, o jogador inteligente",
-    description="API do piegas",
+    title="apatetado, o jogador não tão inteligente",
+    description="API do apatetado",
     version="0.1.0"
 )
 
@@ -31,4 +31,3 @@ async def move(body: AITurnRequest):
             raise HTTPException(status_code=422)
 
         return jogada
-    #else raise 
